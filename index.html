@@ -125,10 +125,53 @@
 
     <section id="favorites" class="view"><div class="section-head"><div><h2>Избранное</h2><p>Сохраняется в этом браузере.</p></div></div><div id="favoriteGrid" class="grid"></div></section>
   </main>
-  <footer class="footer">Персональная книга рецептов • версия 1.4 — рецепты, супы и справочник единиц измерения</footer>
+  <footer class="footer">Персональная книга рецептов • версия 1.5 — рецепты, супы и справочник единиц измерения</footer>
 </div>
 
 <div class="modal" id="recipeModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-box"><button class="close" id="closeModal" aria-label="Закрыть">×</button><div id="modalContent"></div></div></div>
+
+<script>
+(function () {
+  function activateView(id) {
+    var views = document.querySelectorAll('.view');
+    var found = false;
+    views.forEach(function (view) {
+      var active = view.id === id;
+      view.classList.toggle('active', active);
+      if (active) found = true;
+    });
+    document.querySelectorAll('.nav button[data-view]').forEach(function (button) {
+      button.classList.toggle('active', button.getAttribute('data-view') === id);
+    });
+    if (found) {
+      try { history.replaceState(null, '', '#' + id); } catch (_) {}
+      window.scrollTo(0, 0);
+    }
+  }
+
+  function installNavigation() {
+    document.querySelectorAll('.nav button[data-view]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        activateView(button.getAttribute('data-view'));
+      });
+    });
+    document.querySelectorAll('[data-go]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        activateView(button.getAttribute('data-go'));
+      });
+    });
+    var initial = location.hash ? location.hash.slice(1) : 'home';
+    if (!document.getElementById(initial)) initial = 'home';
+    activateView(initial);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', installNavigation, { once: true });
+  } else {
+    installNavigation();
+  }
+})();
+</script>
 
 <script>
 
